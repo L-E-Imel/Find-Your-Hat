@@ -11,7 +11,7 @@ class Field {
         this.field = field;
     }
     print(field) {
-        console.log(field.join(''));
+        this.field.forEach(row => console.log(row.join(' ')));
     }
     static generateField(h, w) {
         let fieldArray = [];
@@ -25,7 +25,7 @@ class Field {
                 tempArr.push(squares[randNum]);
                 console.log(tempArr);
             }
-            fieldArray.push(tempArr);
+            fieldArray[i].push(tempArr);
             console.log(fieldArray);
         }
         return fieldArray;
@@ -33,6 +33,16 @@ class Field {
     }
 }
 
-const play = Field.generateField(5, 7);
+//const play = Field.generateField(5, 7);
+
+const myField = new Field([[pathCharacter, fieldCharacter, fieldCharacter,fieldCharacter],
+                    [hole, fieldCharacter, fieldCharacter, hole],
+                    [fieldCharacter, hat, fieldCharacter, fieldCharacter],
+                    [fieldCharacter, hole, fieldCharacter, fieldCharacter]]);
+
+console.log(myField);
+myField.print();
+
+
 
 
