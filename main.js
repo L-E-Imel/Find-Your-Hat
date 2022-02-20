@@ -4,6 +4,7 @@ const hat = '^';
 const hole = 'O';
 const fieldCharacter = '░';
 const pathCharacter = '*';
+const wall = 'X';
 
 
 class Field {
@@ -16,130 +17,295 @@ class Field {
     }
 
     game(field) {
-        this.print();
-        console.log('Find your hat, but don\'t fall in a hole!');
-        console.log(`
-        Key:
-        You are: ${pathCharacter}
-        Your hat is: ${hat}
-        The holes you want to avoid are: ${hole}
-        The field of play is ${fieldCharacter}.`)
-        console.log(`
-        To move:
-        d = down
-        u = up
-        r = right
-        l = left
-        
-        Choose wisely...
-        `);
-        let x = 0;
-        let y = 0;
-        const winMessage = `You found your hat!
+        const winMessage = `
+        You found your hat!
         Congratulations!
         YOU WIN!`;
-        const outBoundsMessage = `You went out of bounds!
+        const outBoundsMessage = `
+        You went out of bounds!
                 
         GAME OVER!!!`;
-        const holeMessage = `You fell in a hole!
+        const holeMessage = `
+        You fell in a hole!
         
         GAME OVER!!!`;
-        while (this.field[y][x] !== hat) {
-            let direction = prompt(`Which way would you like to move? >> `);
-            direction = direction.toLowerCase();
-            if (direction === 'u') {
-                console.log(`You moved one space up.`);
-            } else if (direction === 'd') {
-                console.log('You moved one space down.');
-            } else if (direction === 'l') {
-                console.log('You moved one space left.');
-            } else if (direction === 'r') {
-                console.log('You moved one space right.');
-            } else {
-                console.log('Please choose a valid direction.');
-                direction = prompt(`Which way would you like to move? >> `);
+
+        const wallMessage = `
+        A wall is blocking your way. Try again.
+        `;
+        let y = Math.floor(Math.random() * (this.field.length - 1));
+        let x = Math.floor(Math.random() * (this.field[y].length - 1));
+        this.field[y][x] = pathCharacter;
+
+        console.log('Find your hat, but don\'t fall in a hole!');
+        
+        let gameMode = prompt(`Select game mode: easy or hard. >> `);
+        gameMode = gameMode.toLowerCase();
+        if (gameMode === 'easy') {
+            console.log(`
+            Key:
+            You are: ${pathCharacter}
+            Your hat is: ${hat}
+            The holes you want to avoid are: ${hole}
+            The field of play is ${fieldCharacter}.`)
+            console.log(`
+            To move:
+            d = down
+            u = up
+            r = right
+            l = left
+        
+            Choose wisely...
+            `);
+            this.print();        
+            while (this.field[y][x] !== hat) {
+                let direction = prompt(`Which way would you like to move? >> `);
+                direction = direction.toLowerCase();
+                if (direction === 'r') {
+                    console.log('You moved one space right.');
+                    if (this.field[y][x + 1] === hat) {
+                        console.log(winMessage);
+                        break;
+                    } else if (this.field[y][x + 1] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y][x + 1] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        x += 1;
+                        this.field[y][x] = pathCharacter;
+                        this.print();
+                    } else {
+                        console.log(outBoundsMessage);
+                        break;
+                    };
+                } else if (direction === 'l') {
+                    console.log('You moved one space left.');
+                    if (this.field[y][x - 1] === hat) {
+                        console.log(winMessage);
+                        break;
+                    } else if (this.field[y][x - 1] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y][x - 1] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        x -= 1;
+                        this.field[y][x] = pathCharacter;
+                        this.print();
+                    } else {
+                        console.log(outBoundsMessage);
+                        break;
+                    };
+                } else if (direction === 'u') {
+                    console.log(`You moved one space up.`);
+                    if (y - 1 < 0) {
+                        console.log(outBoundsMessage);
+                        break;
+                    };
+                    if (this.field[y - 1][x] === hat) {
+                        console.log(winMessage);
+                        break;
+                    } else if (this.field[y - 1][x] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y - 1][x] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        y -= 1;
+                        this.field[y][x] = pathCharacter;
+                        this.print();
+                    } else {
+                        console.log(outBoundsMessage);
+                        break;
+                    };
+                } else if (direction === 'd') {
+                    console.log('You moved one space down.');
+                    if (this.field[y + 1][x] === hat) {
+                        console.log(winMessage);
+                        break;
+                    } else if (this.field[y + 1][x] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y + 1][x] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        y += 1;
+                        this.field[y][x] = pathCharacter;
+                        this.print();
+                    } else {
+                        console.log(outBoundsMessage);
+                        break;
+                    }
+                } else {
+                    console.log('Please choose a valid direction.');
+                    direction = prompt(`Which way would you like to move? >> `);
+                }
             }
-            let tempLocale = this.field[y][x];
-            if (direction === 'r') {
-                if (this.field[y][x + 1] === hat) {
-                    console.log(winMessage);
-                    break;
-                } else if (this.field[y][x + 1] === hole) {
-                    console.log(holeMessage);
-                    break;
-                } else if (this.field[y][x + 1] === fieldCharacter) {
-                    this.field[y][x] = fieldCharacter;
-                    x += 1;
-                    this.field[y][x] = pathCharacter;
-                    this.print();
+        } else if (gameMode === 'hard') {
+            let counter = 5;
+            console.log(`
+            Key:
+            You are: ${pathCharacter}
+            Your hat is: ${hat}
+            The holes you want to avoid are: ${hole}
+            The field of play is ${fieldCharacter}.
+            Walls blocking your way: X`);
+            console.log(`
+            A wall will be added to your board every 5 moves.
+            You must go around it.
+            `);
+            console.log(`
+            To move:
+            d = down
+            u = up
+            r = right
+            l = left
+        
+            Choose wisely...
+            `);
+            
+            while (this.field[y][x] !== hat) {
+                if (counter < 1) {
+                    let a = Math.floor(Math.random() * (this.field.length - 1));
+                    let b = Math.floor(Math.random() * (this.field[a].length - 1));
+                    if (this.field[a][b] === fieldCharacter) {
+                        this.field[a][b] = wall;
+                        this.print();
+                        console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
+                        counter = 5;
+                        console.log(`You have ${counter} moves left before your board changes.`);
+                    } else if (this.field[a][b] !== fieldCharacter) {
+                        let a = Math.floor(Math.random() * (this.field.length - 1));
+                        let b = Math.floor(Math.random() * (this.field[a].length - 1));
+                        this.field[a][b] = wall;
+                        this.print();
+                        console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
+                        counter = 5;
+                        console.log(`You have ${counter} moves left before your board changes.`);
+                    }
+                    
                 } else {
-                    console.log(outBoundsMessage);
-                    break;
-                }
-            } else if (direction === 'l') {
-                if (this.field[y][x - 1] === hat) {
-                    console.log(winMessage);
-                    break;
-                } else if (this.field[y][x - 1] === hole) {
-                    console.log(holeMessage);
-                    break;
-                } else if (this.field[y][x - 1] === fieldCharacter) {
-                    this.field[y][x] = fieldCharacter;
-                    x -= 1;
-                    this.field[y][x] = pathCharacter;
                     this.print();
+                    console.log(`You have ${counter} moves left before your board changes!`);
+                }
+                let direction = prompt(`Which way would you like to move? >> `);
+                direction = direction.toLowerCase();
+                if (direction === 'r'  && this.field[y][x + 1] !== wall) {
+                    console.log(`
+                    You moved one space right.
+                    `);
+                    counter--;
+                    if (this.field[y][x + 1] === hat) {
+                        x += 1;
+                        console.log(winMessage);
+                        
+                    } else if (this.field[y][x + 1] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y][x + 1] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        x += 1;
+                        this.field[y][x] = pathCharacter;                    
+                    } else if ((x+1) >= this.field[y].length) {
+                        console.log(outBoundsMessage);
+                        break;
+                    }
+                } else if (direction === 'r' &&this.field[y][x + 1] === wall) {
+                    console.log(wallMessage);
+                    counter--;
+                } else if (direction === 'l' && this.field[y][x - 1] !== wall) {
+                    console.log(`
+                    You moved one space left.
+                    `);
+                    counter--;
+                    if (this.field[y][x - 1] === hat) {
+                        x -= 1;
+                        console.log(winMessage);
+                    } else if (this.field[y][x - 1] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y][x] === wall) {
+                        console.log(wallMessage);
+                    } else if (this.field[y][x - 1] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        x -= 1;
+                        this.field[y][x] = pathCharacter;
+                    } else if ((x-1) < 0) {
+                        console.log(outBoundsMessage);
+                        break;
+                    }
+                } else if (direction === 'l' && this.field[y][x - 1] === wall) {
+                    console.log(wallMessage);
+                    counter--;
+                } else if (direction === 'u' && y - 1 < 0) {
+                    console.log(outBoundsMessage);
+                    break;
+                } else if (direction === 'u' && this.field[y - 1][x] !== wall) {
+                    console.log(`
+                    You moved one space up.
+                    `);
+                    counter--;
+                    if (this.field[y - 1][x] === hat) {
+                        y -= 1;
+                        console.log(winMessage);
+                    } else if (this.field[y - 1][x] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y][x] === wall) {
+                        console.log(wallMessage);
+                    } else if (this.field[y - 1][x] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        y -= 1;
+                        this.field[y][x] = pathCharacter;
+                    } else if ((y-1) < 0) {
+                        console.log(outBoundsMessage);
+                        break;
+                    }
+                } else if (direction === 'u' && this.field[y - 1][x] === wall) {
+                    console.log(wallMessage);
+                    counter--;
+                } else if (direction === 'd' && this.field[y + 1][x] !== wall) {
+                    console.log(`
+                    You moved one space down.
+                    `);
+                    counter--;
+                    if (this.field[y + 1][x] === hat) {
+                        y += 1;
+                        console.log(winMessage);
+                    } else if (this.field[y + 1][x] === hole) {
+                        console.log(holeMessage);
+                        break;
+                    } else if (this.field[y][x] === wall) {
+                        console.log(wallMessage);
+                    } else if (this.field[y + 1][x] === fieldCharacter) {
+                        this.field[y][x] = fieldCharacter;
+                        y += 1;
+                        this.field[y][x] = pathCharacter;
+                    } else if ((y+1) >= this.field.length) {
+                        console.log(outBoundsMessage);
+                        break;
+                    };
+                } else if (direction === 'd' && this.field[y + 1][x] === wall) {
+                    console.log(wallMessage);
+                    counter--;
                 } else {
-                    console.log(outBoundsMessage);
-                    break;
-                }
-            } else if (direction === 'u') {
-                if (y - 1 < 0) {
-                    console.log(outBoundsMessage);
-                    break;
-                }
-                if (this.field[y - 1][x] === hat) {
-                    console.log(winMessage);
-                    break;
-                } else if (this.field[y - 1][x] === hole) {
-                    console.log(holeMessage);
-                    break;
-                } else if (this.field[y - 1][x] === fieldCharacter) {
-                    this.field[y][x] = fieldCharacter;
-                    y -= 1;
-                    this.field[y][x] = pathCharacter;
                     this.print();
-                } else {
-                    console.log(outBoundsMessage);
-                    break;
+                    console.log('Please choose a valid direction.');
+                    console.log(`You have ${counter} moves left before your board changes!`);
+                    direction = prompt(`Which way would you like to move? >> `);
                 }
-            } else if (direction === 'd') {
-                if (this.field[y + 1][x] === hat) {
-                    console.log(winMessage);
-                    break;
-                } else if (this.field[y + 1][x] === hole) {
-                    console.log(holeMessage);
-                    break;
-                } else if (this.field[y + 1][x] === fieldCharacter) {
-                    this.field[y][x] = fieldCharacter;
-                    y += 1;
-                    this.field[y][x] = pathCharacter;
-                    this.print();
-                } else {
-                    console.log(outBoundsMessage);
-                    break;
-                };
-            }
-        }    
+            }         
+        }
     }
 
     static generateField(h, w, pct = .2) {
-        let fieldArray = new Array(h).fill(fieldCharacter).map(el => new Array(w));
+        let fieldArray = new Array(h).fill(fieldCharacter).map(square => new Array(w));
         for (let i = 0; i < h; i++) {
             for (let j = 0; j < w; j++) {
                 const randNum = Math.random();
-                fieldArray[i][j] = randNum > pct ? fieldCharacter : hole;
+                if (randNum > pct) {
+                    fieldArray[i][j] = fieldCharacter;
+                } else {
+                    fieldArray[i][j] = hole;
+                }
             }
-            //console.log(fieldArray);
         }
         const hatLocale = {
             xAxis: Math.floor(Math.random() * w),
@@ -150,12 +316,11 @@ class Field {
             hatLocale.yAxis = Math.floor(Math.random() * h);
         }
         fieldArray[hatLocale.yAxis][hatLocale.xAxis] = hat;
-        fieldArray[0][0] = pathCharacter;
         return fieldArray;
     }
 }
 
-const play = Field.generateField(5, 7, .3);
+const play = Field.generateField(15, 25, .25);
 const playGame = new Field(play);
 playGame.game();
 
