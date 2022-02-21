@@ -17,10 +17,13 @@ class Field {
     }
 
     game(field) {
+        let moveCount = 0;
         const winMessage = `
         You found your hat!
         Congratulations!
-        YOU WIN!`;
+        YOU WIN!
+        `;
+
         const outBoundsMessage = `
         You went out of bounds!
                 
@@ -36,6 +39,7 @@ class Field {
         let y = Math.floor(Math.random() * (this.field.length - 1));
         let x = Math.floor(Math.random() * (this.field[y].length - 1));
         this.field[y][x] = pathCharacter;
+        
 
         console.log('Find your hat, but don\'t fall in a hole!');
         
@@ -61,11 +65,18 @@ class Field {
             while (this.field[y][x] !== hat) {
                 let direction = prompt(`Which way would you like to move? >> `);
                 direction = direction.toLowerCase();
+                if (direction === 'take me to my hat') {
+                    console.log('Taking you to your hat...');
+                    console.log(winMessage);
+                    break;
+                }
                 if (direction === 'r') {
                     console.log('You moved one space right.');
+                    moveCount++;
                     if (this.field[y][x + 1] === hat) {
+                        x += 1;
                         console.log(winMessage);
-                        break;
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y][x + 1] === hole) {
                         console.log(holeMessage);
                         break;
@@ -80,9 +91,11 @@ class Field {
                     };
                 } else if (direction === 'l') {
                     console.log('You moved one space left.');
+                    moveCount++;
                     if (this.field[y][x - 1] === hat) {
+                        x -= 1;
                         console.log(winMessage);
-                        break;
+                        console.log(`You used ${moveCount} moves to find your hat.`)
                     } else if (this.field[y][x - 1] === hole) {
                         console.log(holeMessage);
                         break;
@@ -97,13 +110,15 @@ class Field {
                     };
                 } else if (direction === 'u') {
                     console.log(`You moved one space up.`);
+                    moveCount++;
                     if (y - 1 < 0) {
                         console.log(outBoundsMessage);
                         break;
                     };
                     if (this.field[y - 1][x] === hat) {
+                        y -= 1;
                         console.log(winMessage);
-                        break;
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y - 1][x] === hole) {
                         console.log(holeMessage);
                         break;
@@ -118,9 +133,11 @@ class Field {
                     };
                 } else if (direction === 'd') {
                     console.log('You moved one space down.');
+                    moveCount++;
                     if (this.field[y + 1][x] === hat) {
+                        y += 1;
                         console.log(winMessage);
-                        break;
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y + 1][x] === hole) {
                         console.log(holeMessage);
                         break;
@@ -135,6 +152,7 @@ class Field {
                     }
                 } else {
                     console.log('Please choose a valid direction.');
+                    moveCount++;
                     direction = prompt(`Which way would you like to move? >> `);
                 }
             }
@@ -168,15 +186,18 @@ class Field {
                     if (this.field[a][b] === fieldCharacter) {
                         this.field[a][b] = wall;
                         this.print();
-                        console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
+                        //console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
                         counter = 5;
                         console.log(`You have ${counter} moves left before your board changes.`);
+                    } else if (this.field[a][b] === hat) {
+                        this.print();
+                        console.log(`You get a bye. No walls were added this round!`);
                     } else if (this.field[a][b] !== fieldCharacter) {
                         let a = Math.floor(Math.random() * (this.field.length - 1));
                         let b = Math.floor(Math.random() * (this.field[a].length - 1));
                         this.field[a][b] = wall;
                         this.print();
-                        console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
+                        //console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
                         counter = 5;
                         console.log(`You have ${counter} moves left before your board changes.`);
                     }
@@ -187,15 +208,21 @@ class Field {
                 }
                 let direction = prompt(`Which way would you like to move? >> `);
                 direction = direction.toLowerCase();
+                if (direction === 'take me to my hat') {
+                    console.log('Taking you to your hat...');
+                    console.log(winMessage);
+                    break;
+                }
                 if (direction === 'r'  && this.field[y][x + 1] !== wall) {
                     console.log(`
                     You moved one space right.
                     `);
                     counter--;
+                    moveCount++;
                     if (this.field[y][x + 1] === hat) {
                         x += 1;
                         console.log(winMessage);
-                        
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y][x + 1] === hole) {
                         console.log(holeMessage);
                         break;
@@ -210,14 +237,17 @@ class Field {
                 } else if (direction === 'r' &&this.field[y][x + 1] === wall) {
                     console.log(wallMessage);
                     counter--;
+                    moveCount++;
                 } else if (direction === 'l' && this.field[y][x - 1] !== wall) {
                     console.log(`
                     You moved one space left.
                     `);
                     counter--;
+                    moveCount++;
                     if (this.field[y][x - 1] === hat) {
                         x -= 1;
                         console.log(winMessage);
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y][x - 1] === hole) {
                         console.log(holeMessage);
                         break;
@@ -234,6 +264,7 @@ class Field {
                 } else if (direction === 'l' && this.field[y][x - 1] === wall) {
                     console.log(wallMessage);
                     counter--;
+                    moveCount++;
                 } else if (direction === 'u' && y - 1 < 0) {
                     console.log(outBoundsMessage);
                     break;
@@ -242,9 +273,11 @@ class Field {
                     You moved one space up.
                     `);
                     counter--;
+                    moveCount++;
                     if (this.field[y - 1][x] === hat) {
                         y -= 1;
                         console.log(winMessage);
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y - 1][x] === hole) {
                         console.log(holeMessage);
                         break;
@@ -261,14 +294,17 @@ class Field {
                 } else if (direction === 'u' && this.field[y - 1][x] === wall) {
                     console.log(wallMessage);
                     counter--;
+                    moveCount++;
                 } else if (direction === 'd' && this.field[y + 1][x] !== wall) {
                     console.log(`
                     You moved one space down.
                     `);
                     counter--;
+                    moveCount++;
                     if (this.field[y + 1][x] === hat) {
                         y += 1;
                         console.log(winMessage);
+                        console.log(`You used ${moveCount} moves to find your hat.`);
                     } else if (this.field[y + 1][x] === hole) {
                         console.log(holeMessage);
                         break;
@@ -285,6 +321,7 @@ class Field {
                 } else if (direction === 'd' && this.field[y + 1][x] === wall) {
                     console.log(wallMessage);
                     counter--;
+                    moveCount++;
                 } else {
                     this.print();
                     console.log('Please choose a valid direction.');
@@ -320,7 +357,7 @@ class Field {
     }
 }
 
-const play = Field.generateField(15, 25, .25);
+const play = Field.generateField(8, 15, .2);
 const playGame = new Field(play);
 playGame.game();
 
