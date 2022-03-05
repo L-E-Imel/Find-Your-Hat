@@ -43,7 +43,7 @@ class Field {
 
         console.log('Find your hat, but don\'t fall in a hole!');
         
-        let gameMode = prompt(`Select game mode: easy or hard. >> `);
+        let gameMode = prompt(`Select game mode: easy or hard >> `);
         gameMode = gameMode.toLowerCase();
         if (gameMode === 'easy') {
             console.log(`
@@ -66,7 +66,9 @@ class Field {
                 let direction = prompt(`Which way would you like to move? >> `);
                 direction = direction.toLowerCase();
                 if (direction === 'take me to my hat') {
-                    console.log('Taking you to your hat...');
+                    console.log(`
+                    One moment please...
+                    Taking you to your hat...`);
                     console.log(winMessage);
                     break;
                 }
@@ -189,7 +191,7 @@ class Field {
                         //console.log(`A wall was added in row ${a + 1}, column ${b + 1}.`);
                         counter = 5;
                         console.log(`You have ${counter} moves left before your board changes.`);
-                    } else if (this.field[a][b] === hat) {
+                    } else if (this.field[a][b] === hat || this.field[a][b] === pathCharacter) {
                         this.print();
                         console.log(`You get a bye. No walls were added this round!`);
                     } else if (this.field[a][b] !== fieldCharacter) {
@@ -209,7 +211,9 @@ class Field {
                 let direction = prompt(`Which way would you like to move? >> `);
                 direction = direction.toLowerCase();
                 if (direction === 'take me to my hat') {
-                    console.log('Taking you to your hat...');
+                    console.log(`
+                    One moment please...
+                    Taking you to your hat...`);
                     console.log(winMessage);
                     break;
                 }
@@ -357,7 +361,7 @@ class Field {
     }
 }
 
-const play = Field.generateField(8, 15, .2);
+const play = Field.generateField(20, 30, .27);
 const playGame = new Field(play);
 playGame.game();
 
